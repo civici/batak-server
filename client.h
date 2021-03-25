@@ -26,3 +26,7 @@ char* client_recv(struct client* c, char* msg);
 void client_send_deck(struct client* c, struct Deck* d);
 
 void client_send_string(struct client* c, char* msg);
+
+int client_get_card_index(struct client* c);
+
+void client_send_card(struct client* c, struct Card* card);
