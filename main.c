@@ -23,11 +23,17 @@ int main()
     struct Deck* d = initdeck();
     int serverfd = network_openserver();
 
-    //client_send_deck(clients[0], d);
-    //client_send_deck(clients[1], d);
+    int flag = 1;
+    setsockopt(serverfd, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(int));
+
+    setsockopt(serverfd, SOL_SOCKET, SO_REUSEPORT, &flag, sizeof(int));
+
 
     client_send_string(clients[0], "you are client 0");
     client_send_string(clients[1], "you are client 1");
+
+    client_send_deck(clients[0], d);
+    client_send_deck(clients[1], d);
 
     shutdown(clients[0]->port, SHUT_RDWR);
     shutdown(clients[1]->port, SHUT_RDWR);
