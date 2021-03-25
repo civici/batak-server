@@ -61,9 +61,8 @@ int network_openserver()
     {
         struct client* currentClient = malloc(clientsize);
         currentClient->port = accept(serverfd, (struct sockaddr*)&address, (socklen_t*)&addrlen);
-        //pthread_create(&currentClient->listenerID, NULL, listener, (void*)currentClient);
-        //client_send(currentClient, buf);
-
+        currentClient->name = client_get_name(currentClient);
+        client_wait_for_players(currentClient);
         for (int i = 0; i < 2; i++)
         {
             if (clients[i] == NULL)

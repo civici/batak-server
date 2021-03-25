@@ -1,19 +1,5 @@
 #include "client.h"
 
-void client_send(struct client* c, char* msg)
-{
-    send(c->port, msg, strlen(msg), 0);
-}
-
-char* client_recv(struct client* c, char* msg)
-{
-
-    char* buffer = calloc(1024, 1);
-    recv(c->port, buffer, 1024, 0);
-    return buffer;
-}
-
-
 /** OPCODE 1 payload structure
  *  first  byte -> opcode
  *  second byte -> deck count
@@ -79,10 +65,8 @@ void client_send_string(struct client* c, char* msg)
  */
 int client_get_card_index(struct client* c)
 {
-    char* payload_outgoing = calloc(2, 1);
-    *payload_outgoing = 3;
-
-    send(c->port, payload_outgoing, 2, 0);
+    char outgoing[2] = {3, 0};
+    send(c->port, outgoing, 2, 0);
 
     char* buf = calloc(1024, 1);
 
@@ -121,4 +105,52 @@ void client_send_card(struct client* c, struct Card* card)
 
     send(c->port, payload - 3, 4, 0);
 
+}
+
+
+/**outgoing payload
+ * OPCODE 6
+ * first byte -> opcode
+ * second byte -> 0
+ * 
+ * incoming payload
+ * OPCODE 7
+ * first byte -> opcode
+ * second byte -> strlen
+ * rest -> string bytes 
+ */
+char* client_get_name(struct client* c)
+{
+    char outgoing[2] = {6, 0};
+    send(c->port, outgoing, 2, 0);
+
+    char* buf = calloc(1024, 1);
+    recv(c->port, buf, 1024, 0);
+
+    int opcode = *buf;
+    int strlen = *++buf;
+
+    char* name = calloc(strlen + 1, 1);
+    memcpy(name, ++buf, strlen);
+
+    free(buf - 2);
+    return name;
+
+}
+/** OPCODE 8
+ *  first byte -> opcode
+ *  second byte -> 0
+ */
+
+void client_wait_for_players(struct client* c)
+{
+    char outgoing[2] = {8, 0};
+    send(c->port, outgoing, 2, 0);
+}
+
+// OPCODE 9 
+void client_wait_for_players_end(struct client* c)
+{
+    char outgoing[2] = {9, 0};
+    send(c->port, outgoing, 2, 0);
 }

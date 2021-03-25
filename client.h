@@ -13,9 +13,9 @@ struct client{
 
     int port;
     unsigned char index;
-    struct client* nextClient;
+    char* name;
 
-    pthread_t listenerID;
+    struct client* nextClient;
 
 };
 
@@ -30,3 +30,7 @@ void client_send_string(struct client* c, char* msg);
 int client_get_card_index(struct client* c);
 
 void client_send_card(struct client* c, struct Card* card);
+
+char* client_get_name(struct client* c);
+
+void client_wait_for_players(struct client* c);
