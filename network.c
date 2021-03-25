@@ -24,6 +24,12 @@ int network_openserver()
 {
     int serverfd = socket(AF_INET, SOCK_STREAM, 0);
     
+    
+    int flag = 1;
+    setsockopt(serverfd, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(int));
+
+    setsockopt(serverfd, SOL_SOCKET, SO_REUSEPORT, &flag, sizeof(int));
+
     assert(serverfd != -1);
 
     printf("socket opened at %d\n", serverfd);
@@ -33,7 +39,7 @@ int network_openserver()
 
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(54321);
+    address.sin_port = htons(54322);
 
     int err = bind(serverfd, (struct sockaddr*)&address, sizeof(address));
     if (err != 0)
@@ -53,7 +59,6 @@ int network_openserver()
 
     while (clientcount < 2)
     {
-        char* buf = "amina koyim";
         struct client* currentClient = malloc(clientsize);
         currentClient->port = accept(serverfd, (struct sockaddr*)&address, (socklen_t*)&addrlen);
         //pthread_create(&currentClient->listenerID, NULL, listener, (void*)currentClient);
