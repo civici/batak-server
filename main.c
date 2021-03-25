@@ -23,6 +23,22 @@ int main()
     struct Deck* d = initdeck();
     int serverfd = network_openserver();
 
+    client_wait_for_players_end(clients[0]);
+    client_wait_for_players_end(clients[1]);
+
+    while (d->count > 0)
+    {
+        client_send_deck(clients[0], d);
+        int index = client_get_card_index(clients[0]);
+        if (index == 254)
+            break;
+        free(deck_remove(d, index));
+        client_send_deck(clients[1], d);
+        index = client_get_card_index(clients[1]);
+        if (index == 254)
+            break;
+        free(deck_remove(d, index));
+    }
 
     shutdown(clients[0]->port, SHUT_RDWR);
     shutdown(clients[1]->port, SHUT_RDWR);

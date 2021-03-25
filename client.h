@@ -34,3 +34,5 @@ void client_send_card(struct client* c, struct Card* card);
 char* client_get_name(struct client* c);
 
 void client_wait_for_players(struct client* c);
+
+void client_wait_for_players_end(struct client* c);
